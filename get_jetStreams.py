@@ -6,7 +6,7 @@ import numpy as np
 import os
 from JetStreamLoc import (create_interpolators, integrate_streamline, 
                          compute_endpoint_deviation, compute_temp_deviation,
-                         smooth_endpoint_connection)
+                         smooth_endpoint_connection, find_temp_crossings)
 
 def process_single_date(year, date, ds_u, ds_v, ds_t):
     """Process a single date and save results"""
@@ -19,9 +19,16 @@ def process_single_date(year, date, ds_u, ds_v, ds_t):
     # Create fast interpolators
     u_interp, v_interp = create_interpolators(u, v)
 
-    # Generate N evenly spaced starting points
-    N = 90
-    start_lats = np.linspace(0, 90, N)
+    # Find -16°C crossing point at 180° longitude
+    mid_lat = find_temp_crossings(temp_celsius)
+    if mid_lat is None:
+        print(f"No -16°C crossing found for date {date}")
+        return
+    
+    # Generate N evenly spaced starting points around the crossing
+    N = 20
+    dlat = 20  # +/- 5 degrees around crossing point
+    start_lats = np.linspace(mid_lat - dlat/2, mid_lat + dlat/2, N)
     trajectories = []
 
     # Compute trajectories
@@ -60,23 +67,23 @@ def process_single_date(year, date, ds_u, ds_v, ds_t):
     ax.add_feature(cfeature.COASTLINE)
     ax.set_global()
 
-    # # Plot all trajectories in gray
-    # for traj in trajectories:
-    #     if len(traj) > 1:
-    #         ax.plot(traj[:, 0], traj[:, 1], "-", color="#06d6a0",
-    #                 linewidth=0.5, transform=ccrs.PlateCarree())
-    #         ax.plot(traj[0, 0], traj[0, 1], 'go', markersize=2,
-    #                 transform=ccrs.PlateCarree())
+    # Plot all trajectories in gray
+    for traj in trajectories:
+        if len(traj) > 1:
+            ax.plot(traj[:, 0], traj[:, 1], "-", color="#06d6a0",
+                    linewidth=0.5, transform=ccrs.PlateCarree())
+            ax.plot(traj[0, 0], traj[0, 1], 'go', markersize=2,
+                    transform=ccrs.PlateCarree())
 
-    # # Plot top 5 qualifying trajectories
-    # colors = ['black', 'red', 'blue', 'green', 'orange']
-    # for rank, idx in enumerate(sorted_indices[:5]):
-    #     traj = trajectories[idx]
-    #     if len(traj) > 1:
-    #         ax.plot(traj[:, 0], traj[:, 1], '-', color=colors[rank],
-    #                 linewidth=2, transform=ccrs.PlateCarree())
-    #         ax.plot(traj[0, 0], traj[0, 1], 'ko', markersize=5,
-    #                 transform=ccrs.PlateCarree())
+    # Plot top 5 qualifying trajectories
+    colors = ['black', 'red', 'blue', 'green', 'orange']
+    for rank, idx in enumerate(sorted_indices[:5]):
+        traj = trajectories[idx]
+        if len(traj) > 1:
+            ax.plot(traj[:, 0], traj[:, 1], '-', color=colors[rank],
+                    linewidth=1, transform=ccrs.PlateCarree())
+            ax.plot(traj[0, 0], traj[0, 1], 'ko', markersize=2,
+                    transform=ccrs.PlateCarree())
 
     # Find best temperature-following trajectory
     temp_deviations = []
@@ -122,7 +129,7 @@ for year in range(2000, 2001):
         dates = ds_u.valid_time.values
         
         # Process each date
-        for date in dates[:2]:
+        for date in dates[:10]:
             date_str = str(date)[:10]  # Convert to YYYY-MM-DD format
             print(f"Processing date {date_str}")
             try:

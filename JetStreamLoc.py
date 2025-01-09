@@ -12,7 +12,7 @@ def create_interpolators(u, v):
                                       bounds_error=False, fill_value=None)
     return u_interp, v_interp
 
-def integrate_streamline(u_interp, v_interp, start_point, dt=3600, max_steps=8640):
+def integrate_streamline(u_interp, v_interp, start_point, dt=360, max_steps=8640):
     """Integrate a single streamline through the vector field"""
     trajectory = [start_point]
     point = start_point.copy()
@@ -112,3 +112,30 @@ def smooth_endpoint_connection(trajectory):
             trajectory[west_idx + i, 1] += (lat_diff * i / n_points)
     
     return trajectory 
+
+def find_temp_crossings(temp_field, target_temp=-16):
+    """Find latitudes where target temperature crosses 180° longitude"""
+    # Get temperature values along 180° longitude (or closest to it)
+    lons = temp_field.longitude.values
+    lon_idx = np.argmin(np.abs(lons - 180))  # Find closest to 180°
+    lon_180 = lons[lon_idx]
+    
+    temp_slice = temp_field.sel(longitude=lon_180)
+    
+    # Find where temperature crosses target value
+    temp_diff = temp_slice - target_temp
+    crossings = []
+    
+    # Find sign changes in temperature difference
+    for i in range(len(temp_diff)-1):
+        if temp_diff[i] * temp_diff[i+1] <= 0:
+            crossings.append(temp_diff.latitude.values[i])
+    
+    if not crossings:
+        print(f"Debug: No crossings found. Temperature range at {lon_180}°E: {temp_slice.min().values:.1f}°C to {temp_slice.max().values:.1f}°C")
+        return None
+    
+    # Return midpoint
+    mid_lat = np.mean(crossings)
+    print(f"Debug: Found crossing at {mid_lat:.1f}°N")
+    return mid_lat 
