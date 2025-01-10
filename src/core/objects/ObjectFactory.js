@@ -76,7 +76,7 @@ export class ObjectFactory {
 
             // Load texture
             const textureLoader = new THREE.TextureLoader();
-            const earthTexture = textureLoader.load('public/assets/textures/1_earth_8k.jpg');
+            const earthTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k.jpg');
             const material = new THREE.MeshPhongMaterial({
                 map: earthTexture,
             });

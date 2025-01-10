@@ -225,7 +225,7 @@ class ScrollCanvas {
         const textureLoader = new THREE.TextureLoader();
         
         // Load default texture first
-        const defaultTexture = textureLoader.load('public/assets/textures/1_earth_8k.jpg', 
+        const defaultTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k.jpg', 
             // Add success callback
             (texture) => {
                 texture.colorSpace = 'srgb';
@@ -1126,25 +1126,29 @@ class ScrollCanvas {
         requestAnimationFrame(() => this.animate());
         
         // Rotate Earth around Y-axis
-        // const earth = this.objects.get('earth');
-        // if (earth && earth.object) {
-        //     const rotationSpeed = 0.02;
-        //     earth.object.rotation.y += rotationSpeed;
-        // }
         const earth = this.objects.get('earth');
-            if (earth && earth.object) {
-                const rotationSpeed = 0.005;
+        if (earth && earth.object) {
+            const rotationSpeed = 0.005;
 
-                // Earth tilt is around Z by -23.5°, so spin axis is original Y, tilted by -23.5° around Z.
-                const tiltAngle = 23.5 * Math.PI / 180;
-                const rotationAxis = new THREE.Vector3(0, 1, 0)
+            // Earth tilt is around Z by -23.5°, so spin axis is original Y, tilted by -23.5° around Z.
+            const tiltAngle = 23.5 * Math.PI / 180;
+            const rotationAxis = new THREE.Vector3(0, 1, 0)
                 .applyAxisAngle(new THREE.Vector3(0, 1, 0), tiltAngle)
                 .normalize();
 
-                // Rotate around that single tilted axis
-                earth.object.rotateOnAxis(rotationAxis, rotationSpeed);
-            }
+            // Rotate around that single tilted axis
+            earth.object.rotateOnAxis(rotationAxis, rotationSpeed);
 
+            // ADD jet stream animation here
+            if (earth.extras) {
+                ['jetStream2001', 'jetStream2002', 'jetStream2003'].forEach(id => {
+                    const jetStream = earth.extras[id];
+                    if (jetStream && jetStream.visible && jetStream.userData.animate) {
+                        jetStream.userData.animate(performance.now() * 0.001);
+                    }
+                });
+            }
+        }
 
         // Calculate velocity and decay it over time
         if (this.scrollVelocity > 0) {
@@ -1165,12 +1169,6 @@ class ScrollCanvas {
         this.renderer.render(this.scene, this.camera);
 
         this.controls.update();
-
-        // Add jet stream rotation if needed
-        // if (this.jetStream) {
-        //     // Rotate with Earth if desired
-        //     this.jetStream.rotation.y += 0.001;
-        // }
     }
 
     getCurrentScene(progress) {
