@@ -24,10 +24,10 @@ def process_single_date(year, date, ds_u, ds_v, ds_t):
     if mid_lat is None:
         print(f"No -16°C crossing found for date {date}")
         return
-    
+
     # Generate N evenly spaced starting points around the crossing
-    N = 20
-    dlat = 20  # +/- 5 degrees around crossing point
+    N = 30
+    dlat = 10 
     start_lats = np.linspace(mid_lat - dlat/2, mid_lat + dlat/2, N)
     trajectories = []
 
@@ -37,71 +37,85 @@ def process_single_date(year, date, ds_u, ds_v, ds_t):
         traj = integrate_streamline(u_interp, v_interp, start_point)
         trajectories.append(traj)
 
-    # Compute deviations and create sorted indices
-    deviations = []
+    # Filter trajectories to only those that go around the world
+    global_trajectories = []
+    global_indices = []  # Keep track of original indices
     for i, traj in enumerate(trajectories):
-        initial_lat = start_lats[i]
-        deviation = compute_endpoint_deviation(traj, initial_lat)
-        deviations.append((i, deviation))
+        if len(traj) > 2:  # Basic validity check
+            lon_span = np.max(traj[:, 0]) - np.min(traj[:, 0])
+            if lon_span > 300:  # Using 300 degrees as threshold for "around the world"
+                global_trajectories.append(traj)
+                global_indices.append(i)
 
-    sorted_indices = [i for i, _ in sorted(deviations, key=lambda x: x[1])]
+    if not global_trajectories:
+        print(f"No global trajectories found for date {date}")
+        return
+
+    # Find best temperature-following trajectory among global trajectories
+    temp_deviations = []
+    for i, traj in enumerate(global_trajectories):
+        deviation = compute_temp_deviation(traj, temp_celsius)
+        temp_deviations.append((i, deviation))
+
+    best_local_idx = min(temp_deviations, key=lambda x: x[1])[0]
+    best_temp_idx = global_indices[best_local_idx]  # Convert back to original index
 
     # Plot
     plt.figure(figsize=(15, 10))
     ax = plt.axes(projection=ccrs.PlateCarree())
 
     # Add temperature contours (filled)
-    n_levels = 10  # or whatever number you want for the filled contours
+    n_levels = 10
     temp_min, temp_max = temp_celsius.min(), temp_celsius.max()
     levels_fill = np.linspace(temp_min, temp_max, n_levels)
     temp_contours = ax.contourf(temp.longitude, temp.latitude, temp_celsius,
                                levels=levels_fill, cmap='coolwarm',
                                transform=ccrs.PlateCarree())
 
-    # Add specific -16°C contour line
+    # Add specific -16°C contour line and find the one that circles the globe
     temp_lines = ax.contour(temp.longitude, temp.latitude, temp_celsius,
                            levels=[-16], colors='black', linewidths=1,
                            transform=ccrs.PlateCarree())
-    plt.clabel(temp_lines, inline=True, fontsize=8, fmt='%1.0f°C')
+
+    # Find the contour path that spans the most longitude
+    max_span = 0
+    global_contour = None
+    for path in temp_lines.allsegs[0]:
+        vertices = path
+        lon_span = np.max(vertices[:, 0]) - np.min(vertices[:, 0])
+        if lon_span > max_span:
+            max_span = lon_span
+            global_contour = path
+
+    # Only display the global contour if found
+    if global_contour is not None:
+        ax.plot(
+            global_contour[:, 0],
+            global_contour[:, 1],
+            color="#3a86ff",
+            linewidth=1,
+            transform=ccrs.PlateCarree(),
+        )
 
     ax.add_feature(cfeature.COASTLINE)
     ax.set_global()
 
-    # Plot all trajectories in gray
-    for traj in trajectories:
+    # Plot all global trajectories in light color
+    for traj in global_trajectories:
         if len(traj) > 1:
             ax.plot(traj[:, 0], traj[:, 1], "-", color="#06d6a0",
-                    linewidth=0.5, transform=ccrs.PlateCarree())
+                    linewidth=0.5, transform=ccrs.PlateCarree(), zorder = 12)
             ax.plot(traj[0, 0], traj[0, 1], 'go', markersize=2,
                     transform=ccrs.PlateCarree())
 
-    # Plot top 5 qualifying trajectories
-    colors = ['black', 'red', 'blue', 'green', 'orange']
-    for rank, idx in enumerate(sorted_indices[:5]):
-        traj = trajectories[idx]
-        if len(traj) > 1:
-            ax.plot(traj[:, 0], traj[:, 1], '-', color=colors[rank],
-                    linewidth=1, transform=ccrs.PlateCarree())
-            ax.plot(traj[0, 0], traj[0, 1], 'ko', markersize=2,
-                    transform=ccrs.PlateCarree())
-
-    # Find best temperature-following trajectory
-    temp_deviations = []
-    for idx in sorted_indices[:5]:
-        traj = trajectories[idx]
-        deviation = compute_temp_deviation(traj, temp_celsius)
-        temp_deviations.append((idx, deviation))
-
-    best_temp_idx = min(temp_deviations, key=lambda x: x[1])[0]
-
     # Smooth and plot final trajectory
-    best_traj = smooth_endpoint_connection(trajectories[best_temp_idx])
+    best_traj = smooth_endpoint_connection(global_trajectories[best_temp_idx])
     if len(best_traj) > 1:
         ax.plot(best_traj[:, 0], best_traj[:, 1], '-',
                 color='white', linewidth=5,
                 transform=ccrs.PlateCarree(), zorder=10)
         ax.plot(best_traj[0, 0], best_traj[0, 1], 'ko',
-                markersize=8, transform=ccrs.PlateCarree(), zorder=11)
+                markersize=2, transform=ccrs.PlateCarree(), zorder=11)
 
     plt.title(f'Wind Streamlines at 250hPa - {date}')
     plt.savefig(f'_output/streamlines_{date}.png', bbox_inches='tight', dpi=300)
@@ -117,7 +131,7 @@ def process_single_date(year, date, ds_u, ds_v, ds_t):
 os.makedirs('_output', exist_ok=True)
 
 # Process each year
-for year in range(2000, 2001):
+for year in range(2002, 2025):
     print(f"Processing year {year}...")
     try:
         # Open datasets for the year
@@ -129,7 +143,7 @@ for year in range(2000, 2001):
         dates = ds_u.valid_time.values
         
         # Process each date
-        for date in dates[:10]:
+        for date in dates:
             date_str = str(date)[:10]  # Convert to YYYY-MM-DD format
             print(f"Processing date {date_str}")
             try:

@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.interpolate import RegularGridInterpolator
+from scipy.signal import savgol_filter
+from scipy.interpolate import CubicSpline
 
 def create_interpolators(u, v):
     """Create fast interpolation functions for u and v wind fields"""
@@ -12,7 +14,7 @@ def create_interpolators(u, v):
                                       bounds_error=False, fill_value=None)
     return u_interp, v_interp
 
-def integrate_streamline(u_interp, v_interp, start_point, dt=360, max_steps=8640):
+def integrate_streamline(u_interp, v_interp, start_point, dt=360, max_steps=8640*10):
     """Integrate a single streamline through the vector field"""
     trajectory = [start_point]
     point = start_point.copy()
@@ -70,7 +72,7 @@ def compute_endpoint_deviation(trajectory, initial_lat):
     return np.min(lat_deviations)
 
 def compute_temp_deviation(trajectory, temp_field, target_temp=-16):
-    """Compute average deviation from target temperature along trajectory"""
+    """Compute average deviation from target temperature along trajectory in Western Hemisphere"""
     if len(trajectory) < 2:
         return float('inf')
     
@@ -81,37 +83,42 @@ def compute_temp_deviation(trajectory, temp_field, target_temp=-16):
     
     deviations = []
     for point in trajectory:
-        try:
-            temp = float(temp_interp([point[1], point[0]]))
-            if not np.isnan(temp):
-                deviations.append(abs(temp - target_temp))
-        except ValueError:
-            continue
+        # Only consider points in Western Hemisphere (-180 to 0)
+        if -180 <= point[0] <= 0:
+            try:
+                temp = float(temp_interp([point[1], point[0]]))
+                if not np.isnan(temp):
+                    deviations.append(abs(temp - target_temp))
+            except ValueError:
+                continue
     
     return np.mean(deviations) if deviations else float('inf')
 
 def smooth_endpoint_connection(trajectory):
-    """Smoothly connect endpoints of trajectory at 180°"""
-    east_points = trajectory[trajectory[:, 0] >= 179]
-    west_points = trajectory[trajectory[:, 0] <= -179]
+    """Smooth trajectory using cubic spline for endpoints and Savitzky-Golay filter overall"""
+    # Find points near 180° (both east and west)
+    buffer = 5  # degrees from 180°
+    east_mask = trajectory[:, 0] >= (180 - buffer)
+    west_mask = trajectory[:, 0] <= (-180 + buffer)
     
-    if len(east_points) == 0 or len(west_points) == 0:
-        return trajectory
+    if any(east_mask) and any(west_mask):
+        # Get indices for spline region
+        east_idx = np.where(east_mask)[0]
+        west_idx = np.where(west_mask)[0]
+        
+        # Create spline region
+        spline_region = np.concatenate([west_idx, east_idx])
+        spline_lons = trajectory[spline_region, 0]
+        spline_lats = trajectory[spline_region, 1]
+        
+        # Create and evaluate cubic spline
+        cs = CubicSpline(spline_lons, spline_lats, bc_type='natural')
+        trajectory[spline_region, 1] = cs(spline_lons)
     
-    east_end = east_points[0]
-    west_end = west_points[-1]
+    # Apply Savitzky-Golay filter to entire trajectory
+    trajectory[:, 1] = savgol_filter(trajectory[:, 1], window_length=51, polyorder=5)
     
-    n_points = 5
-    east_idx = np.where(trajectory[:, 0] >= 179)[0][0]
-    west_idx = np.where(trajectory[:, 0] <= -179)[0][-1]
-    
-    if east_idx >= n_points and west_idx + n_points < len(trajectory):
-        lat_diff = east_end[1] - west_end[1]
-        for i in range(n_points):
-            trajectory[east_idx - i, 1] -= (lat_diff * i / n_points)
-            trajectory[west_idx + i, 1] += (lat_diff * i / n_points)
-    
-    return trajectory 
+    return trajectory
 
 def find_temp_crossings(temp_field, target_temp=-16):
     """Find latitudes where target temperature crosses 180° longitude"""
