@@ -10,7 +10,9 @@ export function createJetStreamTrajectory(year, radius = 1.01, opacity = 1, colo
         color: color,
         linewidth: 8,
         transparent: true,
-        opacity: 1,
+        opacity: opacity,
+        depthWrite: false,  // Prevent z-fighting between line segments
+        depthTest: true,    // Still test against other objects
         resolution: new THREE.Vector2(window.innerWidth, window.innerHeight)
     });
 
@@ -23,9 +25,9 @@ export function createJetStreamTrajectory(year, radius = 1.01, opacity = 1, colo
     // Create points for animation
     const pointGeometry = new THREE.SphereGeometry(0.02, 8, 8);
     const pointMaterial = new THREE.MeshBasicMaterial({
-        color: 0x168aad,
+        color: 0x42a5f5,
         transparent: false,
-        opacity: 0.5
+        opacity: 0.05
     });
     
     const points = [];
@@ -130,7 +132,7 @@ export function createJetStreamTrajectory(year, radius = 1.01, opacity = 1, colo
 
     // Update animation function
     group.userData.animate = (time) => {
-        const speed = -0.1; // Adjust for faster/slower animation
+        const speed = -0.075; // Adjust for faster/slower animation
         updatePointPositions(time * speed);
     };
 

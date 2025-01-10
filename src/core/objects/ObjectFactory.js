@@ -90,19 +90,14 @@ export class ObjectFactory {
             // Add atmosphere models to earth mesh
             earthMesh.add(atmosphereNonlinear);
 
-            // Create animated jet stream
-            const animatedJetStream = createAnimatedJetStreamTrajectory(1.05, 0.8, 0xffffff);
-            earthMesh.add(animatedJetStream);
+            // // Create animated jet stream
+            // const animatedJetStream = createAnimatedJetStreamTrajectory(1.05, 0.8, 0xffffff);
+            // earthMesh.add(animatedJetStream);
 
             // Create individual jet streams for each year
-            const jetStream2001 = createJetStreamTrajectory('2001', 1.05);
-            console.log('Created jetStream2001:', {
-                visible: jetStream2001.visible,
-                position: jetStream2001.position,
-                scale: jetStream2001.scale
-            });
-            const jetStream2002 = createJetStreamTrajectory('2002', 1.05);
-            const jetStream2003 = createJetStreamTrajectory('2003', 1.05);
+            const jetStream2001 = createJetStreamTrajectory('2001', 1.05, 0.05,  0xbbdefb);
+            const jetStream2002 = createJetStreamTrajectory('2002', 1.05, 0.05,  0xbbdefb);
+            const jetStream2003 = createJetStreamTrajectory('2003', 1.05, 0.05,  0xbbdefb);
             
             earthMesh.add(jetStream2001);
             earthMesh.add(jetStream2002);
@@ -114,7 +109,7 @@ export class ObjectFactory {
                 extras: {
                     needsLight: true,
                     atmosphereHotNonlinear: atmosphereNonlinear,
-                    animatedJetStream: animatedJetStream,
+                    // animatedJetStream: animatedJetStream,
                     jetStream2001: jetStream2001,
                     jetStream2002: jetStream2002,
                     jetStream2003: jetStream2003,
