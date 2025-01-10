@@ -120,11 +120,6 @@ class ScrollCanvas {
                 if (object.extras && object.extras.shadowCylinder) {
                     this.scene.add(object.extras.shadowCylinder);
                 }
-                
-                // Store reference to jet stream if it exists
-                if (config.type === 'jetStream') {
-                    this.jetStream = object.object;
-                }
             } else if (object.type === 'plot') {
                 this.container.appendChild(object.object);
             } else {
@@ -500,6 +495,44 @@ class ScrollCanvas {
                     // Apply the final calculated offset
                     if (finalOffset !== 0) {
                         this.moveEarthInScreenSpace(finalOffset);
+                    }
+                }
+            });
+
+            // Handle extra configurations
+            extraConfig.forEach(config => {
+                if (config.type === "yearSequence") {
+                    const earth = this.objects.get('earth');
+                    if (!earth || !earth.extras.animatedJetStream) return;
+
+                    // Get the jetStream object
+                    const jetStream = earth.extras.animatedJetStream;
+
+                    // Check if we're within the overall sequence timeframe
+                    if (progress >= config.entry.at && progress <= config.exit.at) {
+                        // Find which year should be visible
+                        const activeYear = config.years.find(yearConfig => 
+                            progress >= yearConfig.entry.at && 
+                            progress <= yearConfig.exit.at
+                        );
+
+                        if (activeYear) {
+                            console.log(`[DEBUG] Showing jet stream for year ${activeYear.year}`);
+                            jetStream.showYear(activeYear.year);
+                        }
+                    } else {
+                        // Outside the sequence timeframe, hide all
+                        jetStream.hideAll();
+                    }
+                }
+            });
+
+            extraConfig.forEach(config => {
+                if (config.type === 'jetStream') {
+                    const jetStream = earth.extras[config.id];
+                    if (jetStream) {
+                        const shouldBeVisible = progress >= config.entry.at && progress <= config.exit.at;
+                        jetStream.visible = shouldBeVisible;
                     }
                 }
             });

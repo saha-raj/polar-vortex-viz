@@ -4,7 +4,7 @@ import { Line2 } from '../../../node_modules/three/examples/jsm/lines/Line2.js';
 import { LineMaterial } from '../../../node_modules/three/examples/jsm/lines/LineMaterial.js';
 import { LineGeometry } from '../../../node_modules/three/examples/jsm/lines/LineGeometry.js';
 
-export function createJetStreamTrajectory(radius = 1.01, opacity = 0.8, color = 0xffffff) {
+export function createJetStreamTrajectory(year, radius = 1.01, opacity = 0.8, color = 0xffffff) {
     const geometry = new LineGeometry();
     
     const material = new LineMaterial({
@@ -17,8 +17,8 @@ export function createJetStreamTrajectory(radius = 1.01, opacity = 0.8, color = 
 
     const jetStreamMesh = new Line2(geometry, material);
 
-    // Load and process the CSV data
-    d3.csv('_python/_output/jetstream_traj_2001-01-01T00:00:00.000000000.csv')
+    // Update path to match your file structure
+    d3.csv(`_python/_output/_traj/jetstream_traj_${year}-01-01T00:00:00.000000000.csv`)
         .then(data => {
             const positions = [];
             data.forEach(d => {

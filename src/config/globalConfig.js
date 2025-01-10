@@ -270,32 +270,35 @@ export const extraConfig = [
     //     exit: { at: DUR_SEGMENT * 3 }
     // },
 
+    
+
     {
-        id: "animatedJetStream",
-        type: "yearSequence",
+        id: "jetStream2001",
+        type: "jetStream",
         entry: { at: DUR_SEGMENT * 4 },
-        exit: { at: DUR_SEGMENT * 5.5 },
-        years: [
-            {
-                year: '2001',
-                entry: { at: DUR_SEGMENT * 4 },
-                exit: { at: DUR_SEGMENT * 4.5 }
-            },
-            {
-                year: '2002',
-                entry: { at: DUR_SEGMENT * 4.5 },
-                exit: { at: DUR_SEGMENT * 5 }
-            },
-            {
-                year: '2003',
-                entry: { at: DUR_SEGMENT * 5 },
-                exit: { at: DUR_SEGMENT * 5.5 }
-            }
-        ]
+        exit: { at: DUR_SEGMENT * 4.5 },
+        params: {
+            year: "2001"
+        }
     },
-
-
-
+    {
+        id: "jetStream2002",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 4.5 },
+        exit: { at: DUR_SEGMENT * 5 },
+        params: {
+            year: "2002"
+        }
+    },
+    {
+        id: "jetStream2003",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 5 },
+        exit: { at: DUR_SEGMENT * 5.5 },
+        params: {
+            year: "2003"
+        }
+    },
 
     {
         id: "background-2",
