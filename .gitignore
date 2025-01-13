@@ -1,6 +1,8 @@
 _python/_data/
 _python/_output/
+_python/temp_downloads/
 *.nc
+*.grib
 .DS_Store
 **/.DS_Store
 .DS_Store

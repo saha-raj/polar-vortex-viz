@@ -33,7 +33,7 @@ export function createJetStreamTrajectory(year, radius = 1.01, opacity = 1, colo
     const points = [];
     const NUM_POINTS = 50;  // Number of points to distribute along path
 
-    d3.csv(`_python/_output/_traj/jetstream_traj_${year}-01-01T00:00:00.000000000_aligned.csv`)
+    d3.csv(`_python/_output/_traj/max_dlat_${year}_aligned.csv`)
         .then(data => {
             const positions = [];
             const cumulativeDistances = [0];  // Track actual distances along path

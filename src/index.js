@@ -536,6 +536,23 @@ class ScrollCanvas {
                     }
                 }
             });
+
+            extraConfig.forEach(config => {
+                if (config.type === 'seaIce') {
+                    const seaIce = earth.extras[config.id];
+                    if (seaIce) {
+                        const entryAt = config.entry.at;
+                        const exitAt = config.exit.at;
+                        // Only update visibility if it needs to change
+                        const shouldBeVisible = progress >= entryAt && progress <= exitAt;
+                        if (seaIce.visible !== shouldBeVisible) {
+                            seaIce.visible = shouldBeVisible;
+                            // Optional: log only when visibility changes
+                            console.log(`${config.id} visibility changed to: ${shouldBeVisible}`);
+                        }
+                    }
+                }
+            });
         };
 
         // Add animation button handler
@@ -1139,12 +1156,22 @@ class ScrollCanvas {
             // Rotate around that single tilted axis
             earth.object.rotateOnAxis(rotationAxis, rotationSpeed);
 
-            // ADD jet stream animation here
+            // Handle jet streams and sea ice visibility/animation
             if (earth.extras) {
+                // Existing jet stream code
                 ['jetStream2001', 'jetStream2002', 'jetStream2003'].forEach(id => {
                     const jetStream = earth.extras[id];
                     if (jetStream && jetStream.visible && jetStream.userData.animate) {
                         jetStream.userData.animate(performance.now() * 0.001);
+                    }
+                });
+
+                // Add sea ice handling
+                ['seaIce2001', 'seaIce2002', 'seaIce2003'].forEach(id => {
+                    const seaIce = earth.extras[id];
+                    if (seaIce && seaIce.visible) {
+                        // Currently no animation, just ensuring visibility is handled
+                        seaIce.visible = true;
                     }
                 });
             }

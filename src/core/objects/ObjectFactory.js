@@ -15,6 +15,7 @@ import { StandaloneAnimatedHysteresisPlot } from './StandaloneAnimatedHysteresis
 import { StandaloneAlbedoPlot } from './StandaloneAlbedoPlot.js';
 import { createJetStreamTrajectory } from './JetStreamTrajectory.js';
 import { createAnimatedJetStreamTrajectory } from './AnimatedJetStreamTrajectory.js';
+import { createSeaIceLayer } from './SeaIceLayer.js';
 
 export class ObjectFactory {
     static createObject(config) {
@@ -103,6 +104,16 @@ export class ObjectFactory {
             earthMesh.add(jetStream2002);
             earthMesh.add(jetStream2003);
 
+            // Create sea ice layers for each year
+            const seaIce2001 = createSeaIceLayer('2001', 1.01, 1, 0xffffff);
+            console.log('Created seaIce2001:', seaIce2001);
+            earthMesh.add(seaIce2001);
+            const seaIce2002 = createSeaIceLayer('2002', 1.01, 1, 0xffffff);
+            const seaIce2003 = createSeaIceLayer('2003', 1.01, 1, 0xffffff);
+            
+            earthMesh.add(seaIce2002);
+            earthMesh.add(seaIce2003);
+
             return {
                 type: '3dObject',
                 object: earthMesh,
@@ -113,6 +124,9 @@ export class ObjectFactory {
                     jetStream2001: jetStream2001,
                     jetStream2002: jetStream2002,
                     jetStream2003: jetStream2003,
+                    seaIce2001: seaIce2001,
+                    seaIce2002: seaIce2002,
+                    seaIce2003: seaIce2003,
                     material: material
                 }
             };

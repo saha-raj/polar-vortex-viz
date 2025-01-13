@@ -301,6 +301,34 @@ export const extraConfig = [
     },
 
     {
+        id: "seaIce2001",
+        type: "seaIce",
+        entry: { at: DUR_SEGMENT * 4 },
+        exit: { at: DUR_SEGMENT * 4.5 },
+        params: {
+            year: "2001"
+        }
+    },
+    {
+        id: "seaIce2002",
+        type: "seaIce",
+        entry: { at: DUR_SEGMENT * 4.5 },
+        exit: { at: DUR_SEGMENT * 5 },
+        params: {
+            year: "2002"
+        }
+    },
+    {
+        id: "seaIce2003",
+        type: "seaIce",
+        entry: { at: DUR_SEGMENT * 5 },
+        exit: { at: DUR_SEGMENT * 8.5 },
+        params: {
+            year: "2003"
+        }
+    },
+
+    {
         id: "background-2",
         type: "background",
         file: "public/assets/backgrounds/pbd.webp",
