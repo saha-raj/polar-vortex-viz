@@ -7,9 +7,10 @@ echo "===== COPYING ASSETS ====="
 mkdir -p dist/assets/textures/seaice dist/assets/backgrounds
 mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backgrounds
 
-# Create .nojekyll file for GitHub Pages
+# Create .nojekyll file for GitHub Pages (both in root and /public)
 touch dist/.nojekyll
-echo "Created .nojekyll file to disable GitHub Pages Jekyll processing"
+touch dist/public/.nojekyll
+echo "Created .nojekyll files to disable GitHub Pages Jekyll processing"
 
 # Copy favicon
 echo "Copying favicon..."
@@ -37,7 +38,7 @@ cp -R public/assets/* dist/assets/
 cp -R public/assets/* dist/public/assets/
 
 # Create build marker
-echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.8\"}" > dist/build-info.json
+echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.9\"}" > dist/build-info.json
 
 # Verify directories
 echo "===== VERIFICATION ====="
