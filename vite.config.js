@@ -7,6 +7,13 @@ export default {
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets'
+    assetsDir: 'assets',
+    copyPublicDir: true,
+    assetsInlineLimit: 4096,
+    rollupOptions: {
+      input: {
+        main: './index.html'
+      }
+    }
   }
 } 

@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "vite build && ./copy-assets.sh",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",

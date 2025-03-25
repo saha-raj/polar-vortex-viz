@@ -22,6 +22,20 @@ import { ClimateModel } from './core/simulation/climate-model.js';
 import { BackgroundManager } from './components/BackgroundManager.js';
 import { StandaloneAnimatedSolutionPlot } from './core/objects/StandaloneAnimatedSolutionPlot.js';
 
+// Debug - Check if assets are accessible
+console.log('BASE_URL:', import.meta.env.BASE_URL);
+console.log('Testing asset URLs:');
+[
+  'public/assets/textures/2_no_clouds_8k_no_seaice.jpg',
+  'public/assets/textures/rodinia_unpix.png',
+  'public/assets/sagelabs-favicon.png'
+].forEach(path => {
+  const img = new Image();
+  img.onload = () => console.log(`✓ Asset found: ${path}`);
+  img.onerror = () => console.error(`✗ Asset NOT found: ${path}`);
+  img.src = `${import.meta.env.BASE_URL}${path}`;
+});
+
 // Set color management before anything else
 THREE.ColorManagement.enabled = true;
 THREE.ColorManagement.legacyMode = false;
