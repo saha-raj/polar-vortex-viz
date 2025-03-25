@@ -26,9 +26,9 @@ import { StandaloneAnimatedSolutionPlot } from './core/objects/StandaloneAnimate
 console.log('BASE_URL:', import.meta.env.BASE_URL);
 console.log('Testing asset URLs:');
 [
-  'public/assets/textures/2_no_clouds_8k_no_seaice.jpg',
-  'public/assets/textures/rodinia_unpix.png',
-  'public/assets/sagelabs-favicon.png'
+  'assets/textures/2_no_clouds_8k_no_seaice.jpg',
+  'assets/textures/rodinia_unpix.png',
+  'assets/sagelabs-favicon.png'
 ].forEach(path => {
   const img = new Image();
   img.onload = () => console.log(`✓ Asset found: ${path}`);
@@ -239,7 +239,7 @@ class ScrollCanvas {
         const textureLoader = new THREE.TextureLoader();
         
         // Load default texture first
-        const defaultTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k_no_seaice.jpg', 
+        const defaultTexture = textureLoader.load('assets/textures/2_no_clouds_8k_no_seaice.jpg', 
             // Add success callback
             (texture) => {
                 texture.colorSpace = 'srgb';

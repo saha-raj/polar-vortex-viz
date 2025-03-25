@@ -132,7 +132,7 @@ export class ObjectFactory {
 
             // Load texture
             const textureLoader = new THREE.TextureLoader();
-            const earthTexture = textureLoader.load(`${import.meta.env.BASE_URL}public/assets/textures/2_no_clouds_8k_no_seaice.jpg`);
+            const earthTexture = textureLoader.load(`${import.meta.env.BASE_URL}assets/textures/2_no_clouds_8k_no_seaice.jpg`);
             
             // Create a more realistic material that responds better to lighting
             const material = new THREE.MeshPhongMaterial({
