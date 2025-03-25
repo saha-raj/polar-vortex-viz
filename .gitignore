@@ -1,7 +1,7 @@
-_python/_data/
-_python/_output/
-_python/temp_downloads/
-_output/jetstream_trajectories_UNALIGNED/
+python/_data/
+python/_output/
+python/temp_downloads/
+output/jetstream_trajectories_UNALIGNED/
 *.nc
 *.grib
 .DS_Store

@@ -30,7 +30,7 @@ function createTemperatureLayer(date, radius = 1.03, opacity = 0.7, isNormalDay 
     
     // For February 2010 data
     if (date.startsWith('2010-02')) {
-        texturePath = `_output/normal/temperature_overlays_normal_2010_feb/temp_${date}.png`;
+        texturePath = `output/normal/temperature_overlays_normal_2010_feb/temp_${date}.png`;
         console.log('Loading normal day temperature data from:', texturePath);
         tempTexture = textureLoader.load(texturePath);
     } else {
