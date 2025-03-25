@@ -36,9 +36,16 @@ jobs:
       - name: Debug file structure
         run: |
           echo "=== Files in dist ==="
-          find dist -type f | sort
-          echo "=== Files in dist/public ==="
-          find dist/public -type f | sort
+          find dist -type f | grep -v "node_modules" | sort
+          echo "=== Files in dist/output ==="
+          find dist/output -type f 2>/dev/null || echo "No output files found"
+          echo "=== Check if _output exists ==="
+          ls -la _output 2>/dev/null || echo "_output directory not found"
+          echo "=== Check if output exists ==="
+          ls -la output 2>/dev/null || echo "output directory not found"
+          echo "=== Content of dist/output directories ==="
+          ls -la dist/output/normal/temperature_overlays_normal_2010_feb/ 2>/dev/null || echo "No temperature files"
+          ls -la dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/ 2>/dev/null || echo "No jetstream files"
       
       - name: Setup Pages
         uses: actions/configure-pages@v4

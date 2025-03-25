@@ -7,6 +7,10 @@ echo "===== COPYING ASSETS ====="
 mkdir -p dist/assets/textures/seaice dist/assets/backgrounds
 mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backgrounds
 
+# Create output directories
+mkdir -p dist/output/normal/temperature_overlays_normal_2010_feb
+mkdir -p dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb
+
 # Create .nojekyll file for GitHub Pages (both in root and /public)
 touch dist/.nojekyll
 touch dist/public/.nojekyll
@@ -32,6 +36,24 @@ cp public/assets/textures/seaice/*.png dist/assets/textures/seaice/
 echo "Copying backgrounds..."
 cp public/assets/backgrounds/*.webp dist/assets/backgrounds/
 
+# Copy output directory data files
+echo "Copying output data files..."
+if [ -d "_output" ]; then
+  echo "Found _output directory, copying contents..."
+  cp -R _output/normal/temperature_overlays_normal_2010_feb/* dist/output/normal/temperature_overlays_normal_2010_feb/ 2>/dev/null || :
+  cp -R _output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/* dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/ 2>/dev/null || :
+elif [ -d "output" ]; then
+  echo "Found output directory, copying contents..."
+  cp -R output/normal/temperature_overlays_normal_2010_feb/* dist/output/normal/temperature_overlays_normal_2010_feb/ 2>/dev/null || :
+  cp -R output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/* dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/ 2>/dev/null || :
+else
+  echo "No output directories found - creating empty placeholder files for temperature overlays"
+  for i in $(seq -f "%02g" 1 14); do
+    touch "dist/output/normal/temperature_overlays_normal_2010_feb/temp_2010-02-$i.png"
+    touch "dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/jetstream_traj_2010-02-${i}T00:00:00.000000000_aligned.csv"
+  done
+fi
+
 # Create empty texture files that GitHub Pages is requesting
 echo "Creating empty texture files for GitHub Pages requests..."
 touch dist/public/assets/textures/clouds_transparent_2.png
@@ -46,7 +68,7 @@ cp -R public/assets/* dist/assets/
 cp -R public/assets/* dist/public/assets/
 
 # Create build marker
-echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.10\"}" > dist/build-info.json
+echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.11\"}" > dist/build-info.json
 
 # Verify directories
 echo "===== VERIFICATION ====="
@@ -54,5 +76,7 @@ echo "Files in dist/public/assets:"
 find dist/public/assets -type f | wc -l
 echo "Files in dist/assets:"
 find dist/assets -type f | wc -l
+echo "Files in dist/output:"
+find dist/output -type f | wc -l 2>/dev/null || echo "0"
 
 echo "===== ASSET COPYING COMPLETE =====" 
