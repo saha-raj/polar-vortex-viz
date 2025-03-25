@@ -8,7 +8,7 @@
     "build": "vite build && ./copy-assets.sh",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "deploy": "gh-pages --dotfiles -d dist",
     "serve-pages": "npx serve --cors -l 3000",
     "test:diagram": "vite tests/diagrams"
   },
