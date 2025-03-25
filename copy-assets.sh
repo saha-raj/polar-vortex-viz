@@ -9,6 +9,7 @@ mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backg
 
 # Create .nojekyll file for GitHub Pages
 touch dist/.nojekyll
+echo "Created .nojekyll file to disable GitHub Pages Jekyll processing"
 
 # Copy favicon
 echo "Copying favicon..."
@@ -36,7 +37,7 @@ cp -R public/assets/* dist/assets/
 cp -R public/assets/* dist/public/assets/
 
 # Create build marker
-echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.7\"}" > dist/build-info.json
+echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.8\"}" > dist/build-info.json
 
 # Verify directories
 echo "===== VERIFICATION ====="
