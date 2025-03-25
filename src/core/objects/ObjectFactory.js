@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { PotentialPlot } from './PotentialPlot.js';
 import { MODEL_PARAMS } from '../simulation/constants.js';
-import { marked } from '../../../public/assets/lib/marked.esm.js';
 import { createIceGroup } from './ice.js';
 import { createShadowCylinder } from './shadowCylinder.js';
 import { createAtmosphereNonLinear } from './atmosphereNonLinear.js';
