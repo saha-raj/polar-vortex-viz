@@ -238,7 +238,7 @@ const configObjects = [
     {
         id: "background-2",
         type: "background",
-        file: "public/assets/backgrounds/pbd.webp",
+        file: `${import.meta.env.BASE_URL}public/assets/backgrounds/pbd.webp`,
         entry: { at: 0 },
         exit: { at: 1 }
     },
@@ -930,7 +930,7 @@ export const extraConfig = [
     {
         id: "background-2",
         type: "background",
-        file: "public/assets/backgrounds/pbd.webp",
+        file: `${import.meta.env.BASE_URL}public/assets/backgrounds/pbd.webp`,
         entry: { at: 0 },
         exit: { at: 1 }
     },

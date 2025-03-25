@@ -38,8 +38,8 @@ export function createJetStreamTrajectory(year, radius = 1.01, opacity = 1, colo
     // For February 2010 data
     if (year.startsWith('2010-02')) {
         // First try the aligned file
-        const alignedPath = `output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/jetstream_traj_${year}_aligned.csv`;
-        const originalPath = `output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/jetstream_traj_${year}.csv`;
+        const alignedPath = `${import.meta.env.BASE_URL}output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/jetstream_traj_${year}_aligned.csv`;
+        const originalPath = `${import.meta.env.BASE_URL}output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb/jetstream_traj_${year}.csv`;
         dataPath = alignedPath;
         
         // Log which file we're trying to load

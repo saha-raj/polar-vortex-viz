@@ -125,7 +125,7 @@ export function createSeaIceLayer(year, radius = 1.01, opacity = 0.8, color = 0x
 
     // Load the sea ice texture
     const textureLoader = new THREE.TextureLoader();
-    const iceTexture = textureLoader.load(`public/assets/textures/seaice/seaice_${year}.png`);
+    const iceTexture = textureLoader.load(`${import.meta.env.BASE_URL}public/assets/textures/seaice/seaice_${year}.png`);
 
     const material = new THREE.MeshBasicMaterial({
         map: iceTexture,

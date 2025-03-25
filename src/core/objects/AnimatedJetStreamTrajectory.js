@@ -29,7 +29,7 @@ export function createAnimatedJetStreamTrajectory(radius = 1.01, opacity = 0.8, 
         jetStreamMesh.visible = true;
         jetStreamMesh.renderOrder = 1;
         
-        d3.csv(`python/output/traj/jetstream_traj_${year}-01-01T00:00:00.000000000.csv`)
+        d3.csv(`${import.meta.env.BASE_URL}python/output/traj/jetstream_traj_${year}-01-01T00:00:00.000000000.csv`)
             .then(data => {
                 console.log(`Loaded data for year ${year}, points: ${data.length}`);
                 const positions = [];

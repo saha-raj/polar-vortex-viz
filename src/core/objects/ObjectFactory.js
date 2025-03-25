@@ -30,7 +30,7 @@ function createTemperatureLayer(date, radius = 1.03, opacity = 0.7, isNormalDay 
     
     // For February 2010 data
     if (date.startsWith('2010-02')) {
-        texturePath = `output/normal/temperature_overlays_normal_2010_feb/temp_${date}.png`;
+        texturePath = `${import.meta.env.BASE_URL}output/normal/temperature_overlays_normal_2010_feb/temp_${date}.png`;
         console.log('Loading normal day temperature data from:', texturePath);
         tempTexture = textureLoader.load(texturePath);
     } else {
@@ -132,7 +132,7 @@ export class ObjectFactory {
 
             // Load texture
             const textureLoader = new THREE.TextureLoader();
-            const earthTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k_no_seaice.jpg');
+            const earthTexture = textureLoader.load(`${import.meta.env.BASE_URL}public/assets/textures/2_no_clouds_8k_no_seaice.jpg`);
             
             // Create a more realistic material that responds better to lighting
             const material = new THREE.MeshPhongMaterial({
