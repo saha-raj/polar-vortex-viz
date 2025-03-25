@@ -30,8 +30,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Create directories structure
+        run: |
+          mkdir -p dist
+          mkdir -p dist/public
+          touch dist/.nojekyll
+          touch dist/public/.nojekyll
+      
       - name: Build
         run: npm run build
+        
+      - name: Debug build directories
+        run: |
+          echo "Listing build directories..."
+          ls -la dist/ || echo "No dist directory"
+          ls -la dist/public/ || echo "No dist/public directory"
+          ls -la public/ || echo "No public directory"
+          
+          echo "Checking .nojekyll files..."
+          test -f dist/.nojekyll && echo "dist/.nojekyll exists" || echo "dist/.nojekyll missing"
+          test -f dist/public/.nojekyll && echo "dist/public/.nojekyll exists" || echo "dist/public/.nojekyll missing"
       
       - name: Debug file structure
         run: |

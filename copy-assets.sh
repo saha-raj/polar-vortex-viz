@@ -7,14 +7,16 @@ echo "===== COPYING ASSETS ====="
 mkdir -p dist/assets/textures/seaice dist/assets/backgrounds
 mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backgrounds
 
+# Create .nojekyll file for GitHub Pages (both in root and /public)
+# First create the root .nojekyll file
+touch dist/.nojekyll
+# Then create the public .nojekyll file
+touch dist/public/.nojekyll
+echo "Created .nojekyll files to disable GitHub Pages Jekyll processing"
+
 # Create output directories
 mkdir -p dist/output/normal/temperature_overlays_normal_2010_feb
 mkdir -p dist/output/normal/jetstream_trajectories_ALIGNED_normal_2010_feb
-
-# Create .nojekyll file for GitHub Pages (both in root and /public)
-touch dist/.nojekyll
-touch dist/public/.nojekyll
-echo "Created .nojekyll files to disable GitHub Pages Jekyll processing"
 
 # Copy favicon
 echo "Copying favicon..."
