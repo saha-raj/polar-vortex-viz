@@ -32,13 +32,21 @@ cp public/assets/textures/seaice/*.png dist/assets/textures/seaice/
 echo "Copying backgrounds..."
 cp public/assets/backgrounds/*.webp dist/assets/backgrounds/
 
+# Create empty texture files that GitHub Pages is requesting
+echo "Creating empty texture files for GitHub Pages requests..."
+touch dist/public/assets/textures/clouds_transparent_2.png
+touch dist/public/assets/textures/water_world_pix.jpg
+touch dist/public/assets/textures/2_no_clouds_8k.jpg
+touch dist/public/assets/textures/2_no_clouds_8k_no_seaice.png
+touch dist/public/assets/sagelabs-favicon.png
+
 # Copy all textures to BOTH locations
 echo "Copying textures to both paths..."
 cp -R public/assets/* dist/assets/
 cp -R public/assets/* dist/public/assets/
 
 # Create build marker
-echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.9\"}" > dist/build-info.json
+echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.10\"}" > dist/build-info.json
 
 # Verify directories
 echo "===== VERIFICATION ====="
