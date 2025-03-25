@@ -8,6 +8,9 @@ cp public/assets/textures/rodinia_unpix.png dist/assets/textures/
 cp public/assets/textures/seaice/*.png dist/assets/textures/seaice/
 cp public/assets/backgrounds/*.webp dist/assets/backgrounds/
 
+# Copy favicon.ico to root of dist
+cp public/favicon.ico dist/ 2>/dev/null || :
+
 # Remove favicon file explicitly since it's causing issues
 rm -f dist/sagelabs-favicon.png
 rm -f dist/assets/sagelabs-favicon.png
