@@ -8,10 +8,11 @@ mkdir -p dist/assets/textures/seaice dist/assets/backgrounds
 mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backgrounds
 
 # Create .nojekyll file for GitHub Pages (both in root and /public)
-# First create the root .nojekyll file
-touch dist/.nojekyll
-# Then create the public .nojekyll file
-touch dist/public/.nojekyll
+echo "Creating .nojekyll files..."
+echo "" > dist/.nojekyll
+echo "" > dist/public/.nojekyll
+ls -la dist/.nojekyll
+ls -la dist/public/.nojekyll
 echo "Created .nojekyll files to disable GitHub Pages Jekyll processing"
 
 # Create output directories

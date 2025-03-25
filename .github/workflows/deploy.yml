@@ -30,16 +30,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Create directories structure
+      - name: Create critical files
         run: |
           mkdir -p dist
           mkdir -p dist/public
-          touch dist/.nojekyll
-          touch dist/public/.nojekyll
+          echo "Creating .nojekyll files with echo..."
+          echo "" > dist/.nojekyll
+          echo "" > dist/public/.nojekyll
+          echo "Verifying .nojekyll files:"
+          ls -la dist/.nojekyll
+          ls -la dist/public/.nojekyll
       
       - name: Build
         run: npm run build
         
+      - name: Manual .nojekyll check and recreation
+        run: |
+          echo "Double-checking .nojekyll files after build..."
+          if [ ! -f "dist/.nojekyll" ]; then
+            echo "dist/.nojekyll is missing, recreating..."
+            echo "" > dist/.nojekyll
+          fi
+          
+          if [ ! -f "dist/public/.nojekyll" ]; then
+            echo "dist/public/.nojekyll is missing, recreating..."
+            echo "" > dist/public/.nojekyll
+          fi
+          
+          echo "Final verification of .nojekyll files:"
+          ls -la dist/.nojekyll
+          ls -la dist/public/.nojekyll
+      
       - name: Debug build directories
         run: |
           echo "Listing build directories..."

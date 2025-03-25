@@ -37,8 +37,12 @@ echo "Step 3: Setting up environment..."
 echo "Step 4: Creating basic directory structure..."
 mkdir -p dist
 mkdir -p dist/public
-touch dist/.nojekyll
-touch dist/public/.nojekyll
+echo "Creating .nojekyll files with echo..."
+echo "" > dist/.nojekyll
+echo "" > dist/public/.nojekyll
+echo "Verifying .nojekyll files:"
+ls -la dist/.nojekyll
+ls -la dist/public/.nojekyll
 
 # Step 5: Install dependencies (like in GitHub Actions)
 echo "Step 5: Installing dependencies..."
@@ -47,6 +51,26 @@ npm ci
 # Step 6: Run the build (like in GitHub Actions)
 echo "Step 6: Running build..."
 npm run build
+
+# Step 6.5: Double-check .nojekyll files after build
+echo "Step 6.5: Double-checking .nojekyll files after build..."
+if [ ! -f "dist/.nojekyll" ]; then
+  echo "⚠️ dist/.nojekyll is missing, recreating..."
+  echo "" > dist/.nojekyll
+else
+  echo "✅ dist/.nojekyll exists"
+fi
+
+if [ ! -f "dist/public/.nojekyll" ]; then
+  echo "⚠️ dist/public/.nojekyll is missing, recreating..."
+  echo "" > dist/public/.nojekyll
+else
+  echo "✅ dist/public/.nojekyll exists"
+fi
+
+echo "Final verification of .nojekyll files:"
+ls -la dist/.nojekyll
+ls -la dist/public/.nojekyll
 
 # Step 7: Debug directories (like in GitHub Actions)
 echo "Step 7: Debugging directories..."
