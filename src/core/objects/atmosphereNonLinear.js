@@ -20,6 +20,7 @@ export function createAtmosphereNonLinear(numLayers = 12, baseOpacity = 0.1, col
                         transparent: true,
                         opacity: opacity,
                         shininess: 0,
+                        depthWrite: false,
                     })
                 );
 
@@ -27,7 +28,7 @@ export function createAtmosphereNonLinear(numLayers = 12, baseOpacity = 0.1, col
                 AtmosphereHotNonlinear.add(layer);
             }
             
-            AtmosphereHotNonlinear.visible = false;  // Start invisible
+            AtmosphereHotNonlinear.visible = true;  // Start visible
             
 
     return AtmosphereHotNonlinear;

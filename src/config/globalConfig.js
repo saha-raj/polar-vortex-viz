@@ -58,18 +58,18 @@ const DUR_TRANS_FRAC = 0.2;
 const HEIGHT_MULTIPLIER = 150;
 const DELAY_FRAC_SEGMENT = 0.05;
 
-const EARTH_X = 50;  // Center of screen horizontally
-const EARTH_Y = 50;  // Center of screen vertically
+const EARTH_X = 50;  
+const EARTH_Y = 35;  
 
-export const INTRO_HEAD_X = 5;
-export const INTRO_HEAD_Y = 40;
-export const INTRO_SEGMENT_X = 5;
-export const INTRO_SEGMENT_Y = 60;
+export const INTRO_HEAD_X = 50;
+export const INTRO_HEAD_Y = 60;
+export const INTRO_SEGMENT_X = 50;
+export const INTRO_SEGMENT_Y = 75;
 
-export const HEAD_X = 5;
+export const HEAD_X = 50;
 export const HEAD_Y = 10;
 export const SEGMENT_X = HEAD_X;
-export const SEGMENT_Y = 50;
+export const SEGMENT_Y = 75;
 
 const SCROLL_dX = 0;
 const SCROLL_dY = 50;
@@ -185,148 +185,55 @@ const configObjects = [
         id: "earth",
         type: "3dObject",
         position: { x: EARTH_X, y: EARTH_Y },
+        initiallyVisible: true,
         transition: {
-            entry_from: { x: EARTH_X, y: EARTH_Y, at: 0, duration: 0.1 },
+            entry_from: null,
             exit_to: null
-            // exit_to: { x: EARTH_X, y: EARTH_Y - SCROLL_dY, at: 0.9, duration: 0.01 }
         },
         transformations: [
             {
                 type: "scale",
-                scale_to: 0.05,
-                at: DUR_SEGMENT * 3 + DUR_TRANS + DELAY, 
-                duration: 0.02
-            },
-            {
-                type: "scale",
-                scale_to: 1,
-                at: DUR_SEGMENT * 5, 
-                duration: 0.02
-            },
-            // {
-            //     type: "translation",
-            //     delta_x: 0, 
-            //     delta_y: -40,
-            //     at: 0.90, duration: 0.02
-            // },
-            // {
-            //     type: "translation",
-            //     delta_x: 0, 
-            //     delta_y: 0,
-            //     at: DUR_SEGMENT * 22, 
-            //     duration: 0.02
-            // },
-            // {
-            //     type: "camera_look",
-            //     look_x: 20,     
-            //     look_y: 38,     
-            //     look_z: 0,     
-            //     at: 0.9,       
-            //     duration: 0.05 
-            // }
-
+                scale_to: 1.0,
+                at: 0,
+                duration: 0.0
+            }
         ]
     },
-    {
-        id: "rodinia",
-        type: "annotation",
-        content: "An imagined view of what the Earth might have looked like during the Cryogenian period, 700 million years ago.",
-        position: { x: 50, y: 20 },  
-        transition: {
-            entry_from: {
-                x: 50, y: 20,  
-                at: DUR_SEGMENT * 6 + DUR_TRANS,  
-                duration: 0.001,
-                opacity: 0
-            },
-            exit_to: {
-                x: 50, y: 20,  
-                at: DUR_SEGMENT * 7 + DUR_TRANS,  
-                duration: 0.001,
-                opacity: 0
+
+
+    // Add date annotations for Feb 1-14, 2010 in scene 2
+    ...Array.from({ length: 14 }, (_, i) => {
+        const day = i + 1;  // Start from Feb 1
+        
+        const date = `February ${day}, 2010`;
+        const segmentStart = DUR_SEGMENT * 2;  // Start at segment 2
+        const duration = DUR_SEGMENT * 1 / 14;  // Spread across 1 segment (14 days)
+        const startAt = segmentStart + (duration * i);
+        const endAt = startAt + duration;
+        
+        return {
+            id: `date2010-02-${day.toString().padStart(2, '0')}`,
+            type: "annotation",
+            content: date,
+            position: { x: 50, y: 50 },
+            transition: {
+                entry_from: {
+                    x: 50, y: 50,
+                    at: startAt,
+                    duration: 0.001,  // Fast fade in
+                    opacity: 0
+                },
+                exit_to: {
+                    x: 50, y: 50,
+                    at: endAt,
+                    duration: 0.001,  // Fast fade out
+                    opacity: 0
+                }
             }
-        }
-    },
+        };
+    }).filter(Boolean),
 
-];
 
-export const extraConfig = [
-
-    {
-        id: "atmosphereHotNonlinear",
-        entry: { at: 0.7 },
-        exit: { at: 0.90 }
-    },
-
-    // {
-    //     id: "jetStream",
-    //     entry: { at: DUR_SEGMENT * 0.5 },
-    //     exit: { at: DUR_SEGMENT * 3 }
-    // },
-
-    // {
-    //     id: "jetStream",
-    //     entry: { at: DUR_SEGMENT * 2 },
-    //     exit: { at: DUR_SEGMENT * 3 }
-    // },
-
-    
-
-    {
-        id: "jetStream2001",
-        type: "jetStream",
-        entry: { at: DUR_SEGMENT * 4 },
-        exit: { at: DUR_SEGMENT * 4.5 },
-        params: {
-            year: "2001"
-        }
-    },
-    {
-        id: "jetStream2002",
-        type: "jetStream",
-        entry: { at: DUR_SEGMENT * 4.5 },
-        exit: { at: DUR_SEGMENT * 5 },
-        params: {
-            year: "2002"
-        }
-    },
-    {
-        id: "jetStream2003",
-        type: "jetStream",
-        entry: { at: DUR_SEGMENT * 5 },
-        exit: { at: DUR_SEGMENT * 5.5 },
-        params: {
-            year: "2003"
-        }
-    },
-
-    {
-        id: "seaIce2001",
-        type: "seaIce",
-        entry: { at: DUR_SEGMENT * 4 },
-        exit: { at: DUR_SEGMENT * 4.5 },
-        params: {
-            year: "2001"
-        }
-    },
-    {
-        id: "seaIce2002",
-        type: "seaIce",
-        entry: { at: DUR_SEGMENT * 4.5 },
-        exit: { at: DUR_SEGMENT * 5 },
-        params: {
-            year: "2002"
-        }
-    },
-    {
-        id: "seaIce2003",
-        type: "seaIce",
-        entry: { at: DUR_SEGMENT * 5 },
-        exit: { at: DUR_SEGMENT * 8.5 },
-        params: {
-            year: "2003"
-        }
-    },
 
     {
         id: "background-2",
@@ -335,41 +242,7 @@ export const extraConfig = [
         entry: { at: 0 },
         exit: { at: 1 }
     },
-    {
-        id: "earthScreenMovement",
-        movements: [
-            {
-                startAt: DUR_SEGMENT * 10,      // When to start moving (progress 0-1)
-                endAt: DUR_SEGMENT * 10 + DUR_TRANS*2,        // When to end moving
-                startOffset: 0,      // Starting vertical offset
-                endOffset: 1100,      // Ending vertical offset
-            },
-            {
-                startAt: DUR_SEGMENT * 11,      // Another movement period
-                endAt: DUR_SEGMENT * 11 + DUR_TRANS*2,
-                startOffset: 1100,    // Start from where last movement ended
-                endOffset: 0,        // Return to original position
-            },
-            {
-                startAt: DUR_SEGMENT * 16,      // Another movement period
-                endAt: DUR_SEGMENT * 16 + DUR_TRANS*2,
-                startOffset: 0,    // Start from where last movement ended
-                endOffset: 1100,        // Return to original position
-            },
-            {
-                startAt: DUR_SEGMENT * (SIM_SEGMENT_NUM-1),      // Another movement period
-                endAt: DUR_SEGMENT * (SIM_SEGMENT_NUM-1) + DUR_TRANS*2,
-                startOffset: 1100,    // Start from where last movement ended
-                endOffset: 500,        // Return to original position
-            },
-            {
-                startAt: DUR_SEGMENT * (SIM_SEGMENT_NUM+1),      // Another movement period
-                endAt: DUR_SEGMENT * (SIM_SEGMENT_NUM+1) + DUR_TRANS*1,
-                startOffset: 500,    // Start from where last movement ended
-                endOffset: 0,        // Return to original position
-            }
-        ]
-    }
+
 ];
 
 // Override positions
@@ -445,13 +318,624 @@ const finalTextConfigObjects = textConfigObjects.map(obj => {
 });
 
 // Combine arrays, keeping original objects unchanged
-export const globalConfig = [...configObjects, ...finalTextConfigObjects];
+export const globalConfig = {
+    objects: [...configObjects, ...finalTextConfigObjects],
+    totalScenes: NUM_SEGMENTS,
+    heightPerScene: HEIGHT_MULTIPLIER,
+    totalHeight: NUM_SEGMENTS * HEIGHT_MULTIPLIER
+};
 
 // Debug: log the final arrays
 // console.log('Config objects:', configObjects);
 // console.log('Text config objects:', textConfigObjects);
 // Debug: log the final config
 // console.log('Final global config:', globalConfig);
+
+export const extraConfig = [
+    {
+        id: "atmosphereHotNonlinear",
+        entry: { at: 0 },
+        exit: { at: 1 }
+    },
+
+    // Feb 1 data showing from scene 0 to scene 2
+    {
+        id: "jetStream2010-02-01",
+        type: "jetStream",
+        entry: { at: 0 },
+        exit: { at: DUR_SEGMENT * 2 },
+        params: {
+            year: "2010-02-01T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-01",
+        type: "temperature",
+        entry: { at: 0 },
+        exit: { at: DUR_SEGMENT * 2 },
+        params: {
+            date: "2010-02-01",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-01",
+        type: "annotation",
+        content: "February 1, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: 0,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 2 - scene 2 (1/13th of the segment)
+    {
+        id: "jetStream2010-02-02",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13 },
+        params: {
+            year: "2010-02-02T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-02",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13 },
+        params: {
+            date: "2010-02-02",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-02",
+        type: "annotation",
+        content: "February 2, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 3 - scene 2 (2/13th of the segment)
+    {
+        id: "jetStream2010-02-03",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13 },
+        params: {
+            year: "2010-02-03T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-03",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13 },
+        params: {
+            date: "2010-02-03",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-03",
+        type: "annotation",
+        content: "February 3, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 4 - scene 2 (3/13th of the segment)
+    {
+        id: "jetStream2010-02-04",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13 },
+        params: {
+            year: "2010-02-04T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-04",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13 },
+        params: {
+            date: "2010-02-04",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-04",
+        type: "annotation",
+        content: "February 4, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 2 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 5 - scene 2 (4/13th of the segment)
+    {
+        id: "jetStream2010-02-05",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13 },
+        params: {
+            year: "2010-02-05T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-05",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13 },
+        params: {
+            date: "2010-02-05",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-05",
+        type: "annotation",
+        content: "February 5, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 3 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 6 - scene 2 (5/13th of the segment)
+    {
+        id: "jetStream2010-02-06",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13 },
+        params: {
+            year: "2010-02-06T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-06",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13 },
+        params: {
+            date: "2010-02-06",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-06",
+        type: "annotation",
+        content: "February 6, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 4 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 7 - scene 2 (6/13th of the segment)
+    {
+        id: "jetStream2010-02-07",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13 },
+        params: {
+            year: "2010-02-07T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-07",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13 },
+        params: {
+            date: "2010-02-07",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-07",
+        type: "annotation",
+        content: "February 7, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 5 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 8 - scene 2 (7/13th of the segment)
+    {
+        id: "jetStream2010-02-08",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13 },
+        params: {
+            year: "2010-02-08T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-08",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13 },
+        params: {
+            date: "2010-02-08",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-08",
+        type: "annotation",
+        content: "February 8, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 6 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 9 - scene 2 (8/13th of the segment)
+    {
+        id: "jetStream2010-02-09",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13 },
+        params: {
+            year: "2010-02-09T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-09",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13 },
+        params: {
+            date: "2010-02-09",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-09",
+        type: "annotation",
+        content: "February 9, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 10 - scene 2 (9/13th of the segment)
+    {
+        id: "jetStream2010-02-10",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13 },
+        params: {
+            year: "2010-02-10T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-10",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13 },
+        params: {
+            date: "2010-02-10",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-10",
+        type: "annotation",
+        content: "February 10, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 11 - scene 2 (10/13th of the segment)
+    {
+        id: "jetStream2010-02-11",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13 },
+        params: {
+            year: "2010-02-11T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-11",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13 },
+        params: {
+            date: "2010-02-11",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-11",
+        type: "annotation",
+        content: "February 11, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 9 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 12 - scene 2 (11/13th of the segment)
+    {
+        id: "jetStream2010-02-12",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13 },
+        params: {
+            year: "2010-02-12T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-12",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13 },
+        params: {
+            date: "2010-02-12",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-12",
+        type: "annotation",
+        content: "February 12, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 10 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 13 - scene 2 (12/13th of the segment)
+    {
+        id: "jetStream2010-02-13",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 12 / 13 },
+        params: {
+            year: "2010-02-13T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-13",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13 },
+        exit: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 12 / 13 },
+        params: {
+            date: "2010-02-13",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-13",
+        type: "annotation",
+        content: "February 13, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 12 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // February 14 in scene 2 (13/13th) and continuing to the end
+    {
+        id: "jetStream2010-02-14",
+        type: "jetStream",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 12 / 13 },
+        exit: { at: DUR_SEGMENT * 4 },
+        params: {
+            year: "2010-02-14T00:00:00.000000000",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "temp2010-02-14",
+        type: "temperature",
+        entry: { at: DUR_SEGMENT * 2 + DUR_SEGMENT * 12 / 13 },
+        exit: { at: DUR_SEGMENT * 4 },
+        params: {
+            date: "2010-02-14",
+            isNormalDay: true
+        }
+    },
+    {
+        id: "date2010-02-14",
+        type: "annotation",
+        content: "February 14, 2010",
+        position: { x: 50, y: 50 },
+        transition: {
+            entry_from: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 11 / 13,
+                duration: 0.0001,
+                opacity: 0
+            },
+            exit_to: {
+                x: 50, y: 50,
+                at: DUR_SEGMENT * 2 + DUR_SEGMENT * 13 / 13,
+                duration: 0.0001,
+                opacity: 0
+            }
+        }
+    },
+
+    // Background and movements remain unchanged
+    {
+        id: "background-2",
+        type: "background",
+        file: "public/assets/backgrounds/pbd.webp",
+        entry: { at: 0 },
+        exit: { at: 1 }
+    },
+
+];
 
 
 

@@ -58,9 +58,9 @@ def process_trajectory(df):
     
     return df_rotated
 
-def process_files():
-    """Process all trajectory files in the directory"""
-    input_dir = Path('_python/_output/_traj')
+def process_files(input_dir):
+    """Process all trajectory files in the specified directory"""
+    input_dir = Path(input_dir)
     
     if not input_dir.exists():
         raise FileNotFoundError(f"Directory {input_dir} not found")
@@ -86,7 +86,7 @@ def process_files():
             print(f"Aligned start: ({df_aligned.iloc[0]['longitude']:.4f}, {df_aligned.iloc[0]['latitude']:.4f})")
             print(f"Aligned end: ({df_aligned.iloc[-1]['longitude']:.4f}, {df_aligned.iloc[-1]['latitude']:.4f})")
             
-            # Save aligned trajectory
+            # Save aligned trajectory in the same directory
             output_path = file_path.parent / f"{file_path.stem}_aligned{file_path.suffix}"
             df_aligned.to_csv(output_path, index=False)
             
@@ -94,8 +94,15 @@ def process_files():
             print(f"Error processing {file_path.name}: {str(e)}")
 
 if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Align jet stream trajectories')
+    parser.add_argument('input_dir', help='Directory containing trajectory CSV files')
+    
+    args = parser.parse_args()
+    
     try:
-        process_files()
+        process_files(args.input_dir)
         print("Processing complete!")
     except Exception as e:
         print(f"Error: {str(e)}") 

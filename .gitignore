@@ -1,6 +1,7 @@
 _python/_data/
 _python/_output/
 _python/temp_downloads/
+_output/jetstream_trajectories_UNALIGNED/
 *.nc
 *.grib
 .DS_Store
@@ -8,3 +9,12 @@ _python/temp_downloads/
 .DS_Store
 **/.DS_Store
 node_modules/.cache
+node_modules/.vite
+node_modules/.vite/deps_temp_*
+.venv/
+data/
+temp_downloads/
+tests/
+climatemodels.pdf
+console.log
+prompts.txt

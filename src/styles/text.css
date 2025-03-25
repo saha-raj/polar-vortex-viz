@@ -1,11 +1,11 @@
 :root {
     /* OPTION 1: */
     --header-font: 'Lato', sans-serif;
-    --body-font: 'PT Serif', serif;
-    --body-font: 'Merriweather', serif;
-    /* --body-font: 'Libre Baskerville', serif; */
-    /* --body-font: 'Noto Serif', serif; */
-    --body-font-size: 15px;
+    --body-font: 'Lato', sans-serif;
+    /* --body-font: 'Merriweather', serif; */
+    /* --body-font: 'Libre Baskerville', serif;
+    --body-font: 'Noto Serif', serif; */
+    --body-font-size: 18px;
     --body-font-weight: 300;
 
     /* --header-font: "Open Sans", serif; */
@@ -13,15 +13,17 @@
 
     --text-color: #e0e1dd;
     --annotation-color: #C4C5BE;
+    --bg-color: #1B2737; /* Dark blue background color */
 }
 html, body {
     /* overscroll-behavior: none;   */
     min-height: 100vh;  /* Ensure minimum height */
-
+    background-color: var(--bg-color); /* Add dark background color */
 }
 
 body {
     margin: 0;
+    background-color: var(--bg-color); /* Ensure background color is applied */
 }
 #canvas-container {
     position: fixed;
@@ -29,7 +31,7 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
-
+    background-color: var(--bg-color); /* Add dark background color to canvas container */
 }
 /* Base text styles */
 .text-element {
@@ -46,15 +48,18 @@ body {
     color: var(--text-color);
     white-space: nowrap;
     text-align: left;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
 .text-type-intro-segment {
     font-family: var(--body-font);
     font-size: var(--body-font-size);
     color: var(--text-color);
     font-weight: var(--body-font-weight);
-    max-width: clamp(300px, 40vw, 500px);
+    max-width: clamp(500px, 40vw, 800px);
     line-height: 1.6;
+    transform: translate(-50%, -50%);
+    /* text-align: center; */
 }
 
 /* Type-specific styles */
@@ -67,6 +72,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.1em;
     word-spacing: 0.2em;
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
 
 .text-type-segment {
@@ -74,9 +81,9 @@ body {
     font-size: var(--body-font-size);
     color: var(--text-color);
     font-weight: var(--body-font-weight);
-    max-width: clamp(300px, 30vw, 500px);
+    max-width: clamp(500px, 40vw, 800px);
     line-height: 1.6;
-    transform: translateY(-50%);  /* Move up by half height */
+    transform: translate(-50%, -50%);  /* Move up by half height */
 }
 
 .text-element.text-type-annotation {

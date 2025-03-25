@@ -17,7 +17,7 @@ import {
 } from './config/globalConfig.js';
 import { ObjectFactory } from './core/objects/ObjectFactory.js';
 import { DebugLogger } from './debug/DebugLogger.js';
-import { DebugOverlay } from './debug/DebugOverlay.js';
+// import { DebugOverlay } from './debug/DebugOverlay.js';
 import { ClimateModel } from './core/simulation/climate-model.js';
 import { BackgroundManager } from './components/BackgroundManager.js';
 import { StandaloneAnimatedSolutionPlot } from './core/objects/StandaloneAnimatedSolutionPlot.js';
@@ -33,7 +33,7 @@ class ScrollCanvas {
         this.container = document.getElementById(containerId);
         this.lifecycle = new LifecycleManager();
         this.debugLogger = new DebugLogger();
-        this.debugOverlay = new DebugOverlay();
+        // this.debugOverlay = new DebugOverlay();
         
         // Add console.log to verify initialization
         this.backgroundManager = new BackgroundManager('background-container');
@@ -106,7 +106,7 @@ class ScrollCanvas {
         let simControls = null;
         
         // Create and add objects
-        globalConfig.forEach(config => {
+        globalConfig.objects.forEach(config => {
             const object = ObjectFactory.createObject(config);
             if (!object) return;
             
@@ -209,8 +209,8 @@ class ScrollCanvas {
         this.animate();
         
         // Initialize debug utilities
-        this.debugLogger = new DebugLogger();
-        this.debugOverlay = new DebugOverlay();
+        // this.debugLogger = new DebugLogger();
+        // this.debugOverlay = new DebugOverlay();
         this.lastProgress = 0;
         this.lastScrollTime = null;
         this.lastScrollY = 0;
@@ -225,7 +225,7 @@ class ScrollCanvas {
         const textureLoader = new THREE.TextureLoader();
         
         // Load default texture first
-        const defaultTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k.jpg', 
+        const defaultTexture = textureLoader.load('public/assets/textures/2_no_clouds_8k_no_seaice.jpg', 
             // Add success callback
             (texture) => {
                 texture.colorSpace = 'srgb';
@@ -407,7 +407,7 @@ class ScrollCanvas {
                     }
                 }
             });
-            
+
             extraConfig.forEach(config => {
                 if (config.id === 'atmPaleBlueDot2') {
                     const atmosphere = earth.extras.atmPaleBlueDot2;
@@ -553,6 +553,23 @@ class ScrollCanvas {
                     }
                 }
             });
+
+            extraConfig.forEach(config => {
+                if (config.type === 'temperature') {
+                    const tempLayer = earth.extras[config.id];
+                    if (tempLayer) {
+                        const entryAt = config.entry.at;
+                        const exitAt = config.exit.at;
+                        // Only update visibility if it needs to change
+                        const shouldBeVisible = progress >= entryAt && progress <= exitAt;
+                        if (tempLayer.visible !== shouldBeVisible) {
+                            tempLayer.visible = shouldBeVisible;
+                            // Optional: log only when visibility changes
+                            console.log(`${config.id} visibility changed to: ${shouldBeVisible}`);
+                        }
+                    }
+                }
+            });
         };
 
         // Add animation button handler
@@ -684,7 +701,7 @@ class ScrollCanvas {
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.05;
         this.controls.rotateSpeed = 0.5;
-        this.controls.enabled = false;
+        this.controls.enabled = true;
 
         // Add this after other object lifecycle handling
         document.addEventListener('scroll', () => {
@@ -692,7 +709,7 @@ class ScrollCanvas {
             const progress = window.scrollY / scrollHeight;
             
             // Handle animated solution plot lifecycle
-            globalConfig.forEach(config => {
+            globalConfig.objects.forEach(config => {
                 if (config.type === 'animatedSolutionPlot') {
                     const plot = this.objects.get(config.id);
                     if (plot && plot.extras && plot.extras.plot) {
@@ -705,36 +722,6 @@ class ScrollCanvas {
                     }
                 }
             });
-        });
-
-        // Add navigation link
-        const navLink = document.createElement('a');
-        navLink.textContent = 'Go To Interactive Simulation';
-        navLink.className = 'nav-link';
-        navLink.href = '#';
-        navLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-            window.scrollTo({
-                top: 0.865 * scrollHeight,
-                behavior: 'smooth'
-            });
-        });
-        document.body.appendChild(navLink);
-
-        // Add scroll listener to hide/show nav link
-        window.addEventListener('scroll', () => {
-            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = window.scrollY / scrollHeight;
-            
-            // Hide nav link in simulation scene
-            if (progress >= SIM_SEGMENT_START_AT && progress <= SIM_SEGMENT_END_AT) {
-                navLink.style.opacity = '0';
-                navLink.style.pointerEvents = 'none';
-            } else {
-                navLink.style.opacity = '1';
-                navLink.style.pointerEvents = 'auto';
-            }
         });
     }
 
@@ -772,7 +759,7 @@ class ScrollCanvas {
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setClearColor(0x000000, 0);
+        this.renderer.setClearColor(0x1B2737, 1);
         this.renderer.outputColorSpace = 'srgb';
         THREE.ColorManagement.enabled = true;
 
@@ -782,16 +769,18 @@ class ScrollCanvas {
         this.objects = new Map();
 
         // Add lighting for 3D objects
-        // const ambientLight = new THREE.AmbientLight(0x404040);
+        // Ambient light provides overall illumination
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.05);
+        this.scene.add(ambientLight);
+        
+        // Directional light simulates sunlight
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        // original
-        directionalLight.position.set(-10, 0, 0);
-
-        // new
-        // directionalLight.position.set(-7, -10, 20);
-
-        // this.scene.add(ambientLight);
+        directionalLight.position.set(-10, 5, 10);
         this.scene.add(directionalLight);
+        
+        // Hemisphere light provides natural sky/ground lighting variation
+        const hemisphereLight = new THREE.HemisphereLight(0xb1e1ff, 0x000000, 1);
+        this.scene.add(hemisphereLight);
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = false;
@@ -841,31 +830,60 @@ class ScrollCanvas {
             const { position, opacity, transforms, visible } = state;
      
             if (object.type === '3dObject') {
-                const normalizedX = (position.x - 50) / 25;
-                const normalizedY = -(position.y - 50) / 25;
-                
-                object.object.position.set(
-                    normalizedX,
-                    normalizedY,
-                    0
-                );
-                
-                if (transforms.scale && object.extras?.shadowCylinder) {
-                    const scale = transforms.scale;
-                    const cylinderLength = 4;
+                // Special case for Earth to ensure its scale doesn't change when scrolling starts
+                if (id === 'earth') {
+                    // Only apply position, not scale changes at the beginning
+                    object.object.position.set(
+                        (position.x - 50) / 25,
+                        -(position.y - 50) / 25,
+                        0
+                    );
                     
-                    object.object.scale.setScalar(scale);
-                    object.extras.shadowCylinder.scale.setScalar(scale);
-                    object.extras.shadowCylinder.position.x = (cylinderLength/2) * scale;
-                }
-                
-                if (transforms.translation) {
-                    object.object.position.x += transforms.translation.x / 50;
-                    object.object.position.y -= transforms.translation.y / 50;
-                }
-                
-                if (transforms.rotation) {
-                    object.object.rotation.z = transforms.rotation;
+                    // Ensure Earth scale is always 1.0
+                    object.object.scale.setScalar(1.0);
+                    
+                    // Make sure atmosphere is visible
+                    if (object.extras && object.extras.atmosphereHotNonlinear) {
+                        object.extras.atmosphereHotNonlinear.visible = true;
+                    }
+                    
+                    // Apply other transforms if needed
+                    if (transforms.translation) {
+                        object.object.position.x += transforms.translation.x / 50;
+                        object.object.position.y -= transforms.translation.y / 50;
+                    }
+                    
+                    if (transforms.rotation) {
+                        object.object.rotation.z = transforms.rotation;
+                    }
+                } else {
+                    // Normal handling for other 3D objects
+                    const normalizedX = (position.x - 50) / 25;
+                    const normalizedY = -(position.y - 50) / 25;
+                    
+                    object.object.position.set(
+                        normalizedX,
+                        normalizedY,
+                        0
+                    );
+                    
+                    if (transforms.scale && object.extras?.shadowCylinder) {
+                        const scale = transforms.scale;
+                        const cylinderLength = 4;
+                        
+                        object.object.scale.setScalar(scale);
+                        object.extras.shadowCylinder.scale.setScalar(scale);
+                        object.extras.shadowCylinder.position.x = (cylinderLength/2) * scale;
+                    }
+                    
+                    if (transforms.translation) {
+                        object.object.position.x += transforms.translation.x / 50;
+                        object.object.position.y -= transforms.translation.y / 50;
+                    }
+                    
+                    if (transforms.rotation) {
+                        object.object.rotation.z = transforms.rotation;
+                    }
                 }
                 
                 // Add camera look handling
@@ -1022,8 +1040,8 @@ class ScrollCanvas {
             
             // Comment out debug logging
             // this.debugLogger.logProgress(progress);
-            this.debugOverlay.updateProgress(progress);
-            this.debugOverlay.updateScene(this.getCurrentScene(progress));
+            // this.debugOverlay.updateProgress(progress);
+            // this.debugOverlay.updateScene(this.getCurrentScene(progress));
             
             this.lifecycle.updateProgress(progress);
             
@@ -1145,7 +1163,8 @@ class ScrollCanvas {
         // Rotate Earth around Y-axis
         const earth = this.objects.get('earth');
         if (earth && earth.object) {
-            const rotationSpeed = 0.005;
+            // const rotationSpeed = 0.0005;
+            const rotationSpeed = 0;
 
             // Earth tilt is around Z by -23.5°, so spin axis is original Y, tilted by -23.5° around Z.
             const tiltAngle = 23.5 * Math.PI / 180;
@@ -1159,10 +1178,9 @@ class ScrollCanvas {
             // Handle jet streams and sea ice visibility/animation
             if (earth.extras) {
                 // Existing jet stream code
-                ['jetStream2001', 'jetStream2002', 'jetStream2003'].forEach(id => {
-                    const jetStream = earth.extras[id];
-                    if (jetStream && jetStream.visible && jetStream.userData.animate) {
-                        jetStream.userData.animate(performance.now() * 0.001);
+                Object.entries(earth.extras).forEach(([id, object]) => {
+                    if (id.startsWith('jetStream') && object && object.visible && object.userData.animate) {
+                        object.userData.animate(performance.now() * 0.0001);
                     }
                 });
 
