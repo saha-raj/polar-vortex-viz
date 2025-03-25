@@ -21,20 +21,58 @@ import { DebugLogger } from './debug/DebugLogger.js';
 import { ClimateModel } from './core/simulation/climate-model.js';
 import { BackgroundManager } from './components/BackgroundManager.js';
 import { StandaloneAnimatedSolutionPlot } from './core/objects/StandaloneAnimatedSolutionPlot.js';
+import { testAssetPaths, DEBUG_VERSION } from './debug-version.js';
 
-// Debug - Check if assets are accessible
-console.log('BASE_URL:', import.meta.env.BASE_URL);
-console.log('Testing asset URLs:');
-[
-  'assets/textures/2_no_clouds_8k_no_seaice.jpg',
-  'assets/textures/rodinia_unpix.png',
-  'assets/sagelabs-favicon.png'
-].forEach(path => {
-  const img = new Image();
-  img.onload = () => console.log(`✓ Asset found: ${path}`);
-  img.onerror = () => console.error(`✗ Asset NOT found: ${path}`);
-  img.src = `${import.meta.env.BASE_URL}${path}`;
+// Debug version check
+console.log(`Loading application version: ${DEBUG_VERSION}`);
+console.log(`Testing asset accessibility in build`);
+testAssetPaths();
+
+// -------------- ASSET TEST --------------
+// Debug - test accessing critical assets
+const testAssets = [
+    'assets/textures/2_no_clouds_8k_no_seaice.jpg',
+    'assets/textures/rodinia_unpix.png',
+    // Removed favicon tests
+];
+
+console.log('Environment Base URL:', import.meta.env.BASE_URL);
+console.log('Window location:', window.location.href);
+
+testAssets.forEach(path => {
+    const fullPath = `${import.meta.env.BASE_URL}${path}`;
+    console.log(`Testing asset path: ${fullPath}`);
+    
+    // Try HEAD request first to check if file exists
+    fetch(fullPath, { method: 'HEAD' })
+        .then(response => {
+            console.log(`HEAD check for ${path}: ${response.status} ${response.statusText}`);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            console.log(`✅ Asset exists (HEAD): ${fullPath}`);
+            return fetch(fullPath); // Try a regular GET request
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            console.log(`✅ Asset accessible (GET): ${fullPath}`);
+            return response;
+        })
+        .catch(error => {
+            console.error(`❌ Asset check failed: ${fullPath}`, error);
+            // Try relative path as fallback
+            const relativePath = `./${path}`;
+            console.log(`Attempting fallback with relative path: ${relativePath}`);
+            return fetch(relativePath)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    console.log(`✅ Asset accessible via relative path: ${relativePath}`);
+                    return response;
+                })
+                .catch(fallbackError => {
+                    console.error(`❌ All attempts failed for: ${path}`, fallbackError);
+                });
+        });
 });
+// -------------- END ASSET TEST --------------
 
 // Set color management before anything else
 THREE.ColorManagement.enabled = true;
