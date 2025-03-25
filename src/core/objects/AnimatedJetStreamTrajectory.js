@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import * as d3 from 'd3';
-import { Line2 } from '../../../node_modules/three/examples/jsm/lines/Line2.js';
-import { LineMaterial } from '../../../node_modules/three/examples/jsm/lines/LineMaterial.js';
-import { LineGeometry } from '../../../node_modules/three/examples/jsm/lines/LineGeometry.js';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 
 export function createAnimatedJetStreamTrajectory(radius = 1.01, opacity = 0.8, color = 0xffffff) {
     console.log("Creating animated jet stream");
