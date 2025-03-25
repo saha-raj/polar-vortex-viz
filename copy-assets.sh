@@ -1,17 +1,19 @@
 #!/bin/sh
-# Simple asset copying script - no complex logic, just copying files
+# Copy assets to BOTH locations to ensure they're available at all paths
 
 echo "===== COPYING ASSETS ====="
 
-# Create necessary directories
+# Create both directory structures
 mkdir -p dist/assets/textures/seaice dist/assets/backgrounds
+mkdir -p dist/public dist/public/assets/textures/seaice dist/public/assets/backgrounds
 
 # Create .nojekyll file for GitHub Pages
 touch dist/.nojekyll
 
-# Copy favicon explicitly
+# Copy favicon
 echo "Copying favicon..."
 cp public/favicon.ico dist/
+cp public/favicon.ico dist/public/ 2>/dev/null || :
 
 # Remove old favicon files
 echo "Removing old favicon files..."
@@ -28,11 +30,19 @@ cp public/assets/textures/seaice/*.png dist/assets/textures/seaice/
 echo "Copying backgrounds..."
 cp public/assets/backgrounds/*.webp dist/assets/backgrounds/
 
-# Build marker
-echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.6\"}" > dist/build-info.json
+# Copy all textures to BOTH locations
+echo "Copying textures to both paths..."
+cp -R public/assets/* dist/assets/
+cp -R public/assets/* dist/public/assets/
 
-# Print directory contents for verification
+# Create build marker
+echo "{\"buildTime\": \"$(date)\", \"version\": \"1.0.7\"}" > dist/build-info.json
+
+# Verify directories
 echo "===== VERIFICATION ====="
-find dist -type f | sort
+echo "Files in dist/public/assets:"
+find dist/public/assets -type f | wc -l
+echo "Files in dist/assets:"
+find dist/assets -type f | wc -l
 
 echo "===== ASSET COPYING COMPLETE =====" 
