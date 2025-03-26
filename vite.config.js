@@ -10,9 +10,11 @@ export default {
     assetsDir: 'assets',
     copyPublicDir: true,
     assetsInlineLimit: 4096,
+    emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: './index.html'
+        main: './index.html',
+        assetTest: './asset-test.html'
       }
     }
   }

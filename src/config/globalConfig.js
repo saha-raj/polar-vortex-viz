@@ -215,16 +215,16 @@ const configObjects = [
             id: `date2010-02-${day.toString().padStart(2, '0')}`,
             type: "annotation",
             content: date,
-            position: { x: 50, y: 50 },
+            position: { x: 50, y: 55 },
             transition: {
                 entry_from: {
-                    x: 50, y: 50,
+                    x: 50, y: 55,
                     at: startAt,
                     duration: 0.001,  // Fast fade in
                     opacity: 0
                 },
                 exit_to: {
-                    x: 50, y: 50,
+                    x: 50, y: 55,
                     at: endAt,
                     duration: 0.001,  // Fast fade out
                     opacity: 0
@@ -698,17 +698,17 @@ export const extraConfig = [
     {
         id: "date2010-02-09",
         type: "annotation",
-        content: "February 9, 2010",
-        position: { x: 50, y: 50 },
+        content: "February 9, 2010 ---",
+        position: { x: 50, y: 70 },
         transition: {
             entry_from: {
-                x: 50, y: 50,
+                x: 50, y: 70,
                 at: DUR_SEGMENT * 2 + DUR_SEGMENT * 7 / 13,
                 duration: 0.0001,
                 opacity: 0
             },
             exit_to: {
-                x: 50, y: 50,
+                x: 50, y: 70,
                 at: DUR_SEGMENT * 2 + DUR_SEGMENT * 8 / 13,
                 duration: 0.0001,
                 opacity: 0
