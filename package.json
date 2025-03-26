@@ -5,12 +5,13 @@
   "main": "src/index.js",
   "scripts": {
     "start": "vite",
-    "build": "vite build && ./copy-assets.sh",
+    "build": "vite build && ./copy-assets.sh && ./fix-nojekyll.sh",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages --dotfiles -d dist",
     "serve-pages": "npx serve --cors -l 3000",
-    "test:diagram": "vite tests/diagrams"
+    "test:diagram": "vite tests/diagrams",
+    "fix-nojekyll": "./fix-nojekyll.sh"
   },
   "dependencies": {
     "d3": "^7.8.5",
