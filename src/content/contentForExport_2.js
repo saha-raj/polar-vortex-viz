@@ -1,8 +1,8 @@
 export const sceneContent = {
     "header-0": "Visualizing the Polar \nJet Stream",
-    "segment-0": `This project, in its current state, shows a visualization of the polar jet stream overlaid on temperature data from the winter of 2010. The main motivation of this project is to show how the polar jet stream has been meandering more in recent years due to climate change. 
+    "segment-0": `This project, in its current state, shows a visualization of the polar jet stream overlaid on temperature data from the winter of 2010. The motivation of this project is to show how the polar jet stream has been meandering more in recent years due to climate change. 
     
-While not fully complete in that scope, this visualization the circumnavigating path of the polar jet stream from wind data. This is done with the help of computational simulations (not part of the visualization) to compute the path of the polar jet stream.
+The circumpolar path of the jet stream is computed with numerical simulations (not part of the visualization) using real wind data. 
     `,
 
     "header-1": "The Polar Vortex",
