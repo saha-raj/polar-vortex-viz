@@ -43,7 +43,7 @@ body {
 /* Add after other text-type styles */
 .text-type-intro-header {
     font-family: var(--header-font);
-    font-size: 56px;  /* Larger than header */
+    font-size: 48px;  /* Larger than header */
     font-weight: 400;
     color: var(--text-color);
     white-space: nowrap;
@@ -56,9 +56,9 @@ body {
     font-size: var(--body-font-size);
     color: var(--text-color);
     font-weight: var(--body-font-weight);
-    max-width: clamp(500px, 40vw, 800px);
+    max-width: clamp(600px, 45vw, 1000px);
     line-height: 1.6;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -40%);
     /* text-align: center; */
 }
 
